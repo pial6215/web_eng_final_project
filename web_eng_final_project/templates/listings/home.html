@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>🏠 Latest To-Let Advertisements</h2>
+    <hr>
+
+    {% if listings %}
+        {% for listing in listings %}
+            <div style="border: 2px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 8px; background-color: #fafafa;">
+                <h3 style="color: #0056b3; margin-top: 0;">{{ listing.title }}</h3>
+                <p><strong>📍 Location:</strong> {{ listing.location }}</p>
+                <p><strong>🛏️ Bedrooms:</strong> {{ listing.bedrooms }}</p>
+                <p><strong>💰 Price:</strong> ৳{{ listing.price }} / month</p>
+                <p><strong>📝 Details:</strong> {{ listing.description }}</p>
+                
+                <hr style="border-top: 1px dashed #ccc;">
+                <small style="color: gray;">
+                    Posted by: <b>{{ listing.host.username }}</b> on {{ listing.created_at|date:"F d, Y" }}
+                </small>
+            </div>
+        {% endfor %}
+        
+    {% else %}
+        <p style="color: red;">Ekhono kono To-let post kora hoyni!</p>
+    {% endif %}
+
+{% endblock %}
