@@ -5,7 +5,9 @@ from listings import views # listings app theke views niye asha hochhe
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')), 
-    
-    # Ei nicher line-tai ashole Home Page er rasta!
+    path('admin/', admin.site.urls),
+    path('accounts/', include('accounts.urls')), 
+    path('', views.home_view, name='home'), 
+    path('create-listing/', views.create_listing, name='create_listing'),
     path('', views.home_view, name='home'), 
 ]
