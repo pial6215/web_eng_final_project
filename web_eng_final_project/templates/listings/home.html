@@ -1,27 +1,68 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h2>🏠 Latest To-Let Advertisements</h2>
+<div class="row mb-4">
+    <div class="col-md-8 mx-auto">
+        <form method="GET" action="{% url 'home' %}" class="d-flex">
+            <input class="form-control me-2 rounded-pill px-4" type="search" name="search" placeholder="khagan,dawttopara,changao likhe search korun" aria-label="Search">
+            <button class="btn btn-primary rounded-pill px-4" type="submit">Search</button>
+        </form>
+    </div>
+</div>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-dark">🏠 Latest To-Let Advertisements</h2>
+        <a href="{% url 'create_listing' %}" class="btn btn-primary btn-sm rounded-pill px-3">+ Post New Ad</a>
+    </div>
     <hr>
 
-    {% if listings %}
-        {% for listing in listings %}
-            <div style="border: 2px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 8px; background-color: #fafafa;">
-                <h3 style="color: #0056b3; margin-top: 0;">{{ listing.title }}</h3>
-                <p><strong>📍 Location:</strong> {{ listing.location }}</p>
-                <p><strong>🛏️ Bedrooms:</strong> {{ listing.bedrooms }}</p>
-                <p><strong>💰 Price:</strong> ৳{{ listing.price }} / month</p>
-                <p><strong>📝 Details:</strong> {{ listing.description }}</p>
-                
-                <hr style="border-top: 1px dashed #ccc;">
-                <small style="color: gray;">
-                    Posted by: <b>{{ listing.host.username }}</b> on {{ listing.created_at|date:"F d, Y" }}
-                </small>
-            </div>
-        {% endfor %}
-        
-    {% else %}
-        <p style="color: red;">Ekhono kono To-let post kora hoyni!</p>
-    {% endif %}
+    <div class="row">
+        {% if listings %}
+            {% for listing in listings %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden" style="transition: transform 0.3s; cursor: pointer;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                        
+                        <div class="card-body">
+                            <span class="badge bg-success mb-2 p-2">৳{{ listing.price }} / Month</span>
+                            
+                            <h4 class="card-title fw-bold text-primary">{{ listing.title }}</h4>
+                            
+                            <p class="text-muted mb-2">
+                                <i class="fas fa-map-marker-alt text-danger"></i> <b>Location:</b> {{ listing.location }}
+                            </p>
+                            
+                            <div class="d-flex justify-content-between mb-3">
+                                <span><i class="fas fa-bed text-info"></i> {{ listing.bedrooms }} Bedrooms</span>
+                            </div>
+                            
+                            <p class="card-text text-secondary small">
+                                {{ listing.description|truncatewords:15 }}
+                            </p>
+                        </div>
 
+                        <div class="card-footer bg-white border-top-0 pb-3">
+                            <hr class="mt-0">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <small class="text-muted">
+                                    <i class="fas fa-user-circle"></i> {{ listing.host.username }}
+                                </small>
+                                <small class="text-muted">
+                                    <i class="far fa-calendar-alt"></i> {{ listing.created_at|date:"M d" }}
+                                </small>
+                            </div>
+                            <button class="btn btn-outline-primary btn-sm w-100 mt-3 rounded-pill">View Details</button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12 text-center py-5">
+                <div class="alert alert-info rounded-4">
+                    <h4 class="mb-0">😔 Ekhono kono To-let post kora hoyni!</h4>
+                    <p class="mt-2">Prothom post-ti apni-i korun.</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}
