@@ -4,24 +4,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>To-Let System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<body class="bg-light">
 
-    <nav style="background-color: #f1f1f1; padding: 10px;">
-        <a href="{% url 'home' %}">🏠 Home</a> | 
-        
-        {% if user.is_authenticated %}
-            <b>Welcome, {{ user.username }}</b> | 
-            <a href="{% url 'logout' %}">Logout</a>
-            
-        {% else %}
-            <a href="{% url 'login' %}">Login</a> | 
-            <a href="{% url 'signup' %}">Sign Up</a>
-        {% endif %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm mb-4">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{% url 'home' %}">🏠 To-Let BD</a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'home' %}">Home</a>
+                    </li>
+
+                    {% if user.is_authenticated %}
+                        <li class="nav-item text-light mx-3">
+                            Welcome, <b>{{ user.username }}</b>
+                        </li>
+                        <li class="nav-item">
+                            <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-light btn-sm">Logout</button>
+                            </form>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'signup' %}">Sign Up</a>
+                        </li>
+                    {% endif %}
+
+                    <li class="nav-item ms-3">
+                        <a class="nav-link btn btn-warning text-dark fw-bold px-3" href="{% url 'create_listing' %}">+ Add Listing</a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
     </nav>
-    <hr>
 
-    <div style="padding: 20px;">
+    <div class="container">
         {% block content %}
         {% endblock %}
     </div>
