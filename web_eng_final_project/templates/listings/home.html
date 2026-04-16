@@ -4,11 +4,12 @@
 <div class="row mb-4">
     <div class="col-md-8 mx-auto">
         <form method="GET" action="{% url 'home' %}" class="d-flex">
-            <input class="form-control me-2 rounded-pill px-4" type="search" name="search" placeholder="khagan,dawttopara,changao likhe search korun" aria-label="Search">
+            <input class="form-control me-2 rounded-pill px-4" type="search" name="search" placeholder="khagan, dawttopara, changao likhe search korun" aria-label="Search">
             <button class="btn btn-primary rounded-pill px-4" type="submit">Search</button>
         </form>
     </div>
 </div>
+
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold text-dark">🏠 Latest To-Let Advertisements</h2>
@@ -25,8 +26,21 @@
                         <div class="card-body">
                             <span class="badge bg-success mb-2 p-2">৳{{ listing.price }} / Month</span>
                             
-                            <h4 class="card-title fw-bold text-primary">{{ listing.title }}</h4>
-                            
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h4 class="card-title fw-bold text-primary mb-0">{{ listing.title }}</h4>
+                                
+                                <a href="{% url 'toggle_favorite' listing.id %}" class="text-decoration-none">
+                                    {% if user.is_authenticated %}
+                                        {% if listing.favorite_set.all %}
+                                            <i class="fas fa-heart text-danger fs-4"></i>
+                                        {% else %}
+                                            <i class="far fa-heart text-muted fs-4"></i>
+                                        {% endif %}
+                                    {% else %}
+                                        <i class="far fa-heart text-muted fs-4"></i>
+                                    {% endif %}
+                                </a>
+                            </div>
                             <p class="text-muted mb-2">
                                 <i class="fas fa-map-marker-alt text-danger"></i> <b>Location:</b> {{ listing.location }}
                             </p>
@@ -50,7 +64,7 @@
                                     <i class="far fa-calendar-alt"></i> {{ listing.created_at|date:"M d" }}
                                 </small>
                             </div>
-                            <button class="btn btn-outline-primary btn-sm w-100 mt-3 rounded-pill">View Details</button>
+                            <a href="{% url 'listing_detail' listing.id %}" class="btn btn-outline-primary btn-sm w-100 mt-3 rounded-pill text-decoration-none">View Details</a>
                         </div>
                     </div>
                 </div>

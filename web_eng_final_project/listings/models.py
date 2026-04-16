@@ -17,3 +17,15 @@ class Listing(models.Model):
 
     def __str__(self):
         return self.title
+
+# Listing class theke ber hoye ebar Favorite class shuru
+class Favorite(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'listing') # Ekjon user ekta post ekbar-i favorite korte parbe
+
+    def __str__(self):
+        return f"{self.user.username} favorited {self.listing.title}"

@@ -27,6 +27,23 @@ def create_listing(request):
             return redirect('home') 
     else:
         form = ListingForm()
-    
-    # Apnar file name anujayi Notesing.html-e thaklo
     return render(request, 'listings/Notesing.html', {'form': form})
+from django.shortcuts import get_object_or_404
+
+def listing_detail(request, pk):
+    listing = get_object_or_404(Listing, pk=pk)
+    return render(request, 'listings/listing_detail.html', {'listing': listing})
+from .models import Favorite # Jodi Favorite import kora na thake
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def toggle_favorite(request, listing_id):
+    listing = get_object_or_404(Listing, id=listing_id)
+    
+    favorite, created = Favorite.objects.get_or_create(user=request.user, listing=listing)
+    
+    if not created:
+        favorite.delete()
+    
+    return redirect(request.META.get('HTTP_REFERER', 'home'))
