@@ -12,7 +12,7 @@
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-dark">🏠 Latest To-Let Advertisements</h2>
+        <h2 class="fw-bold text-dark">🏠 TO LET Ads</h2>
         <a href="{% url 'create_listing' %}" class="btn btn-primary btn-sm rounded-pill px-3">+ Post New Ad</a>
     </div>
     <hr>
@@ -23,15 +23,21 @@
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden" style="transition: transform 0.3s; cursor: pointer;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
                         
+                        {% if listing.image %}
+                            <img src="{{ listing.image.url }}" class="card-img-top" alt="{{ listing.title }}" style="height: 200px; object-fit: cover;">
+                        {% else %}
+                            <div style="height: 200px; background: #e9ecef;" class="d-flex align-items-center justify-content-center">
+                                <i class="fas fa-image fa-3x text-muted"></i>
+                            </div>
+                        {% endif %}
+
                         <div class="card-body">
-                            <span class="badge bg-success mb-2 p-2">৳{{ listing.price }} / Month</span>
-                            
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <h4 class="card-title fw-bold text-primary mb-0">{{ listing.title }}</h4>
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge bg-success p-2">৳{{ listing.price }} / Month</span>
                                 
                                 <a href="{% url 'toggle_favorite' listing.id %}" class="text-decoration-none">
                                     {% if user.is_authenticated %}
-                                        {% if listing.favorite_set.all %}
+                                        {% if listing.favorite_set.exists %}
                                             <i class="fas fa-heart text-danger fs-4"></i>
                                         {% else %}
                                             <i class="far fa-heart text-muted fs-4"></i>
@@ -41,11 +47,14 @@
                                     {% endif %}
                                 </a>
                             </div>
+                            
+                            <h4 class="card-title fw-bold text-primary mb-2">{{ listing.title }}</h4>
+                            
                             <p class="text-muted mb-2">
                                 <i class="fas fa-map-marker-alt text-danger"></i> <b>Location:</b> {{ listing.location }}
                             </p>
                             
-                            <div class="d-flex justify-content-between mb-3">
+                            <div class="mb-3">
                                 <span><i class="fas fa-bed text-info"></i> {{ listing.bedrooms }} Bedrooms</span>
                             </div>
                             
@@ -56,7 +65,7 @@
 
                         <div class="card-footer bg-white border-top-0 pb-3">
                             <hr class="mt-0">
-                            <div class="d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center justify-content-between mb-3">
                                 <small class="text-muted">
                                     <i class="fas fa-user-circle"></i> {{ listing.host.username }}
                                 </small>
@@ -64,7 +73,7 @@
                                     <i class="far fa-calendar-alt"></i> {{ listing.created_at|date:"M d" }}
                                 </small>
                             </div>
-                            <a href="{% url 'listing_detail' listing.id %}" class="btn btn-outline-primary btn-sm w-100 mt-3 rounded-pill text-decoration-none">View Details</a>
+                            <a href="{% url 'listing_detail' listing.id %}" class="btn btn-outline-primary btn-sm w-100 rounded-pill text-decoration-none">View Details</a>
                         </div>
                     </div>
                 </div>
@@ -72,8 +81,8 @@
         {% else %}
             <div class="col-12 text-center py-5">
                 <div class="alert alert-info rounded-4">
-                    <h4 class="mb-0">😔 Ekhono kono To-let post kora hoyni!</h4>
-                    <p class="mt-2">Prothom post-ti apni-i korun.</p>
+                    <h4 class="mb-0">😔 There is no listing available!</h4>
+                    <p class="mt-2">Please check back later or try a different search.</p>
                 </div>
             </div>
         {% endif %}

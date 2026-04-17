@@ -8,12 +8,14 @@
                 <h4 class="mb-0 fw-bold">📝 Post a New To-Let</h4>
             </div>
             <div class="card-body p-4 bg-light">
-                <form method="POST">
-                    {% csrf_token %}
-                    {{ form.as_p }}
-                    <button type="submit" class="btn btn-success w-100 fw-bold py-2 mt-3 fs-5">
-                        Publish Advertisement
-                    </button>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success w-100 fw-bold py-2 mt-3 fs-5">
+            Publish Advertisement
+        </button>
+    </form>
+</div>
                 </form>
             </div>
         </div>

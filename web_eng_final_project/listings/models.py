@@ -4,7 +4,7 @@ from django.conf import settings
 class Listing(models.Model):
     # Ke biggapon dichhe tar sathe link
     host = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    
+    image = models.ImageField(upload_to='listings/', null=True, blank=True)
     # Barir biboron
     title = models.CharField(max_length=200, help_text="Jemon: 2 Room flat for rent")
     description = models.TextField()
