@@ -5,7 +5,7 @@ class Listing(models.Model):
     # Ke biggapon dichhe tar sathe link
     host = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='listings/', null=True, blank=True)
-    # Barir biboron
+    phone_number = models.CharField(max_length=15, default="01700000000")
     title = models.CharField(max_length=200, help_text="Jemon: 2 Room flat for rent")
     description = models.TextField()
     location = models.CharField(max_length=150)

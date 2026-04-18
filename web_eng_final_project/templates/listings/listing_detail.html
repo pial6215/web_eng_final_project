@@ -28,6 +28,17 @@
                             <h5 class="mb-0 fw-bold">{{ listing.bedrooms }}</h5>
                             <small class="text-muted text-uppercase">Bedrooms</small>
                         </div>
+                        <div class="mt-4">
+    <a href="https://wa.me/{{ listing.phone_number }}?text=Hello, I am interested in your listing: {{ listing.title }}" 
+       target="_blank" 
+       class="btn btn-success btn-lg w-100 rounded-pill shadow-sm">
+        <i class="fab fa-whatsapp"></i> Contact via WhatsApp
+    </a>
+    
+    <a href="tel:{{ listing.phone_number }}" class="btn btn-outline-dark btn-lg w-100 rounded-pill mt-3 shadow-sm">
+        <i class="fas fa-phone-alt"></i> Call Now: {{ listing.phone_number }}
+    </a>
+</div>
                         <div class="col-6">
                             <h5 class="mb-0 fw-bold">Ready to Move</h5>
                             <small class="text-muted text-uppercase">Status</small>

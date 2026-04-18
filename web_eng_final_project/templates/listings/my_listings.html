@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">📊 My Dashboard</h2>
+        <a href="{% url 'create_listing' %}" class="btn btn-primary rounded-pill px-4">+ Post New Ad</a>
+    </div>
+    <hr>
+
+    <div class="row">
+        {% if user_ads %}
+            {% for ad in user_ads %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+                        {% if ad.image %}
+                            <img src="{{ ad.image.url }}" class="card-img-top" style="height: 180px; object-fit: cover;">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold text-primary">{{ ad.title }}</h5>
+                            <p class="text-muted small mb-2"><i class="fas fa-calendar-alt"></i> Posted on: {{ ad.created_at|date:"M d, Y" }}</p>
+                            <h6 class="text-success fw-bold">৳{{ ad.price }}</h6>
+                            
+                            <div class="d-grid gap-2 mt-3">
+                                <a href="{% url 'listing_detail' ad.id %}" class="btn btn-outline-info btn-sm rounded-pill">View Ad</a>
+                                <div class="btn-group w-100 mt-1">
+                                 <a href="{% url 'edit_listing' ad.id %}" class="btn btn-warning btn-sm">Edit</a>
+                                 <a href="{% url 'delete_listing' ad.id %}" class="btn btn-danger btn-sm">Delete</a>
+                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12 text-center py-5">
+                <div class="alert alert-light border rounded-4">
+                    <h4>You haven't posted any ads yet!</h4>
+                    <p>Start posting to find tenants quickly.</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

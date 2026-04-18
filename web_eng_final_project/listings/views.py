@@ -47,3 +47,28 @@ def toggle_favorite(request, listing_id):
         favorite.delete() # Age favorite thakle unfavorite hobe
     
     return redirect(request.META.get('HTTP_REFERER', 'home'))
+@login_required
+def favorites_list(request):
+    favorite_listings = Favorite.objects.filter(user=request.user).select_related('listing')
+    return render(request, 'listings/favorites.html', {'favorites': favorite_listings})
+@login_required
+def my_listings(request):
+    # Shudhu current user-er ads gulo filter kora hochche
+    user_ads = Listing.objects.filter(host=request.user).order_by('-created_at')
+    return render(request, 'listings/my_listings.html', {'user_ads': user_ads})
+def delete_listing(request, pk):
+    listing = get_object_or_404(Listing, pk=pk, host=request.user) # Ensure jeno shudhu owner delete korte pare
+    if request.method == 'POST':
+        listing.delete()
+        return redirect('my_listings')
+    return render(request, 'listings/delete_confirm.html', {'listing': listing})
+def edit_listing(request, pk):
+    listing = get_object_or_404(Listing, pk=pk, host=request.user)
+    if request.method == 'POST':
+        form = ListingForm(request.POST, request.FILES, instance=listing) # instance=listing thaka must
+        if form.is_valid():
+            form.save()
+            return redirect('my_listings')
+    else:
+        form = ListingForm(instance=listing)
+    return render(request, 'listings/Notesing.html', {'form': form, 'edit_mode': True})

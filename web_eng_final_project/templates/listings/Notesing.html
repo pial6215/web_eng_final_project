@@ -8,6 +8,9 @@
                 <h4 class="mb-0 fw-bold">📝 Post a New To-Let</h4>
             </div>
             <div class="card-body p-4 bg-light">
+                <h2 class="fw-bold text-center mb-4">
+    {% if edit_mode %} ✏️ Edit Your Advertisement {% else %} 🏠 Post a New Advertisement {% endif %}
+</h2>
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}

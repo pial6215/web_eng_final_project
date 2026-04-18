@@ -18,7 +18,12 @@
                     <li class="nav-item">
                         <a class="nav-link active" href="{% url 'home' %}">Home</a>
                     </li>
-
+                    <li class="nav-item">
+                          <a class="nav-link" href="{% url 'favorites_list' %}">My Favorites</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="{% url 'my_listings' %}">My Ads</a>
+                    </li>
                     {% if user.is_authenticated %}
                         <li class="nav-item text-light mx-3">
                             Welcome, <b>{{ user.username }}</b>
@@ -83,7 +88,7 @@
         <div class="row align-items-center">
             <div class="col-md-7 col-lg-8">
                 <p>© 2026 Copyright: 
-                    <a href="#" class="text-decoration-none"><strong class="text-primary">Pial & Team</strong></a>
+                    <a href="#" class="text-decoration-none"><strong class="text-primary">        Pial & Team</strong></a>
                 </p>
             </div>
             <div class="col-md-5 col-lg-4">

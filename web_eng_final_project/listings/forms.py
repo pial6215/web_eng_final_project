@@ -12,4 +12,10 @@ class ListingForm(forms.ModelForm):
             'price': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Per month rent'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Write details about the flat...'}),
             'image': forms.FileInput(attrs={'class': 'form-control'}),
+            
         }
+        # listings/forms.py
+class ListingForm(forms.ModelForm):
+    class Meta:
+        model = Listing
+        fields = ['title', 'description', 'location', 'price', 'bedrooms', 'image', 'phone_number'] 
