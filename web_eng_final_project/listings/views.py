@@ -72,3 +72,17 @@ def edit_listing(request, pk):
     else:
         form = ListingForm(instance=listing)
     return render(request, 'listings/Notesing.html', {'form': form, 'edit_mode': True})
+from django.shortcuts import render, redirect
+from django.contrib.auth.forms import UserCreationForm # Ba apnar custom form
+
+def signup_view(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+    else:
+        form = UserCreationForm()
+    
+    # Eikhane 'registration/signup.html' path-ta check korun
+    return render(request, 'registration/signup.html', {'form': form})
