@@ -58,3 +58,9 @@ class SignUpForm(UserCreationForm):
             # Role field-er class already Select widget-e deya hoyeche
             if field_name != 'role':
                 field.widget.attrs.update({'class': 'form-control'})
+# accounts/forms.py
+def clean_username(self):
+    username = self.cleaned_data.get('username')
+    if username.isdigit():
+        raise ValidationError("Username must contain at least one letter.")
+    return username

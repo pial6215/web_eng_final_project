@@ -48,3 +48,10 @@ class Favorite(models.Model):
 
     def __str__(self):
         return f"{self.user.username} likes {self.listing.title}"
+    # listings/models.py add korun
+class ListingImage(models.Model):
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(upload_to='listings/gallery/')
+
+    def __str__(self):
+        return f"Image for {self.listing.title}"

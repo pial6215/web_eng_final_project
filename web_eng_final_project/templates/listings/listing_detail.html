@@ -1,73 +1,103 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <a href="{% url 'home' %}" class="btn btn-light mb-3 text-muted">
-                <i class="fas fa-arrow-left"></i> Back to Home
-            </a>
+<style>
+    .detail-container { max-width: 1100px; margin-top: 3rem; margin-bottom: 4rem; }
+    .property-slider { border-radius: 25px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.1); background: #f8f9fa; }
+    
+    /* Fixed Slider Height */
+    .carousel-item img { height: 500px; object-fit: cover; width: 100%; }
+    
+    .info-card { border-radius: 25px; border: none; box-shadow: 0 10px 40px rgba(0,0,0,0.05); padding: 30px; background: white; height: 100%; }
+    .feature-badge { background: #f0f4ff; color: #4361ee; padding: 10px 20px; border-radius: 12px; font-weight: 600; display: inline-flex; align-items: center; }
+    .contact-box { background: #f8f9fa; border-radius: 20px; padding: 20px; border-left: 5px solid #4361ee; }
+    
+    /* Carousel Control Styling */
+    .carousel-control-prev, .carousel-control-next { width: 10%; }
+    .carousel-control-prev-icon, .carousel-control-next-icon { 
+        background-color: rgba(67, 97, 238, 0.7); 
+        border-radius: 50%; 
+        padding: 20px;
+        background-size: 50%;
+    }
+</style>
 
-            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
-                <div style="height: 300px; background-color: #e9ecef; display: flex; align-items: center; justify-content: center;">
-                    <i class="fas fa-city fa-5x text-secondary"></i>
+<div class="container detail-container">
+    <div class="row g-4">
+        <div class="col-lg-7">
+            {% if listing.images.all %}
+                <div id="listingCarousel" class="carousel slide property-slider" data-bs-ride="carousel">
+                    <div class="carousel-indicators">
+                        {% for img in listing.images.all %}
+                            <button type="button" data-bs-target="#listingCarousel" data-bs-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}"></button>
+                        {% endfor %}
+                    </div>
+
+                    <div class="carousel-inner">
+                        {% for img in listing.images.all %}
+                            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                <img src="{{ img.image.url }}" class="d-block w-100" alt="Property Image">
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    {% if listing.images.count > 1 %}
+                        <button class="carousel-control-prev" type="button" data-bs-target="#listingCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#listingCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    {% endif %}
+                </div>
+            {% else %}
+                <div class="property-slider d-flex align-items-center justify-content-center" style="height: 500px;">
+                    <div class="text-center">
+                        <i class="fas fa-image fa-4x text-muted mb-3"></i>
+                        <p class="text-muted">No images available for this property.</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="col-lg-5">
+            <div class="info-card">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <span class="badge bg-success p-2 px-3 rounded-pill">Available</span>
+                    <button class="btn btn-outline-danger border-0 rounded-circle"><i class="far fa-heart fa-lg"></i></button>
                 </div>
 
-                <div class="card-body p-4">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <h2 class="fw-bold text-primary mb-0">{{ listing.title }}</h2>
-                        <span class="badge bg-success fs-5 p-2 px-3">৳{{ listing.price }} / Month</span>
-                    </div>
+                <h1 class="fw-bold mb-1">{{ listing.title }}</h1>
+                <p class="text-muted mb-4"><i class="fas fa-map-marker-alt me-2 text-primary"></i>{{ listing.location }}</p>
+                
+                <div class="d-flex align-items-center mb-4">
+                    <h2 class="text-primary fw-bold mb-0">৳ {{ listing.price }}</h2>
+                    <span class="text-muted ms-2">/ month</span>
+                </div>
 
-                    <p class="text-muted fs-5">
-                        <i class="fas fa-map-marker-alt text-danger"></i> {{ listing.location }}
-                    </p>
+                <div class="d-flex gap-3 mb-4 flex-wrap">
+                    <div class="feature-badge"><i class="fas fa-bed me-2"></i>{{ listing.bedrooms }} Bed</div>
+                    <div class="feature-badge"><i class="fas fa-bath me-2"></i>Attached Bath</div>
+                </div>
 
-                    <div class="row my-4 text-center">
-                        <div class="col-6 border-end">
-                            <h5 class="mb-0 fw-bold">{{ listing.bedrooms }}</h5>
-                            <small class="text-muted text-uppercase">Bedrooms</small>
-                        </div>
-                        <div class="mt-4">
-    <a href="https://wa.me/{{ listing.phone_number }}?text=Hello, I am interested in your listing: {{ listing.title }}" 
-       target="_blank" 
-       class="btn btn-success btn-lg w-100 rounded-pill shadow-sm">
-        <i class="fab fa-whatsapp"></i> Contact via WhatsApp
-    </a>
-    
-    <a href="tel:{{ listing.phone_number }}" class="btn btn-outline-dark btn-lg w-100 rounded-pill mt-3 shadow-sm">
-        <i class="fas fa-phone-alt"></i> Call Now: {{ listing.phone_number }}
-    </a>
-</div>
-                        <div class="col-6">
-                            <h5 class="mb-0 fw-bold">Ready to Move</h5>
-                            <small class="text-muted text-uppercase">Status</small>
-                        </div>
-                    </div>
+                <h5 class="fw-bold mb-2">Description</h5>
+                <p class="text-secondary mb-4" style="text-align: justify;">{{ listing.description }}</p>
 
-                    <h5 class="fw-bold mt-4">Description</h5>
-                    <p class="text-secondary lh-lg">
-                        {{ listing.description }}
-                    </p>
+                <div class="contact-box mb-4">
+                    <h6 class="fw-bold mb-3">Owner Contact</h6>
+                    <p class="mb-2 text-dark"><i class="fas fa-phone-alt me-2 text-primary"></i> <strong>{{ listing.phone_number }}</strong></p>
+                    <p class="mb-0 text-muted small"><i class="fas fa-user me-2"></i> Listed by: {{ listing.host.username|capfirst }}</p>
+                </div>
 
-                    <hr class="my-4">
-
-                    <div class="bg-light p-3 rounded-3 d-flex align-items-center justify-content-between">
-                        <div>
-                            <p class="mb-0 text-muted small">Posted by</p>
-                            <h6 class="mb-0 fw-bold"><i class="fas fa-user-circle me-1"></i> {{ listing.host.username }}</h6>
-                        </div>
-                        <div>
-                            <p class="mb-0 text-muted small text-end">Posted on</p>
-                            <h6 class="mb-0 fw-bold">{{ listing.created_at|date:"F d, Y" }}</h6>
-                        </div>
-                    </div>
-
-                    <div class="mt-4">
-                        <button class="btn btn-primary w-100 py-2 rounded-pill shadow-sm">
-                            <i class="fas fa-phone-alt me-2"></i> Contact Host
-                        </button>
-                    </div>
+                <div class="d-grid gap-2">
+                    <a href="tel:{{ listing.phone_number }}" class="btn btn-primary py-3 rounded-pill fw-bold shadow-sm">
+                        <i class="fas fa-phone-alt me-2"></i> Call Now
+                    </a>
+                    <a href="https://wa.me/{{ listing.phone_number|slugify }}" target="_blank" class="btn btn-success py-3 rounded-pill fw-bold shadow-sm">
+                        <i class="fab fa-whatsapp me-2"></i> WhatsApp Message
+                    </a>
                 </div>
             </div>
         </div>
