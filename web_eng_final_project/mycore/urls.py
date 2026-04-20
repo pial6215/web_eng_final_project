@@ -1,15 +1,16 @@
 from django.contrib import admin
 from django.urls import path, include
-from listings import views # listings app theke views niye asha hochhe
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include('accounts.urls')), 
-    path('admin/', admin.site.urls),
-    path('accounts/', include('accounts.urls')), 
-    path('', views.home_view, name='home'), 
-    path('create-listing/', views.create_listing, name='create_listing'),
-    path('', views.home_view, name='home'), 
-    path('listing/<int:pk>/', views.listing_detail, name='listing_detail'),
-    path('favorite/<int:listing_id>/', views.toggle_favorite, name='toggle_favorite'),
+    path('accounts/', include('accounts.urls')),
+    
+    # Shudhu ei line-ta thakbe listings-er jonno
+    path('', include('listings.urls')), 
 ]
+
+# Media support (Chobi dekhachhor jonno)
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
