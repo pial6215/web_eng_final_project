@@ -1,103 +1,233 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
 <style>
-    .detail-container { max-width: 1100px; margin-top: 3rem; margin-bottom: 4rem; }
-    .property-slider { border-radius: 25px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.1); background: #f8f9fa; }
-    
-    /* Fixed Slider Height */
-    .carousel-item img { height: 500px; object-fit: cover; width: 100%; }
-    
-    .info-card { border-radius: 25px; border: none; box-shadow: 0 10px 40px rgba(0,0,0,0.05); padding: 30px; background: white; height: 100%; }
-    .feature-badge { background: #f0f4ff; color: #4361ee; padding: 10px 20px; border-radius: 12px; font-weight: 600; display: inline-flex; align-items: center; }
-    .contact-box { background: #f8f9fa; border-radius: 20px; padding: 20px; border-left: 5px solid #4361ee; }
-    
-    /* Carousel Control Styling */
-    .carousel-control-prev, .carousel-control-next { width: 10%; }
-    .carousel-control-prev-icon, .carousel-control-next-icon { 
-        background-color: rgba(67, 97, 238, 0.7); 
-        border-radius: 50%; 
+    :root {
+        --primary-blue: #4361ee;
+        --soft-bg: #f8fafc;
+    }
+
+    body { background-color: var(--soft-bg); }
+
+    .detail-container { max-width: 1200px; margin-top: 2rem; margin-bottom: 5rem; }
+
+    /* Glassmorphism Gallery Container */
+    .gallery-wrapper {
+        background: white;
+        padding: 12px;
+        border-radius: 32px;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+    }
+
+    .main-slider {
+        border-radius: 24px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .carousel-item img {
+        height: 550px;
+        object-fit: cover;
+        width: 100%;
+        transition: transform 0.5s ease;
+    }
+
+    /* Info Sidebar Styling */
+    .sticky-info {
+        position: sticky;
+        top: 20px;
+    }
+
+    .premium-info-card {
+        border-radius: 32px;
+        border: none;
+        background: white;
+        padding: 35px;
+        box-shadow: 0 25px 60px rgba(0,0,0,0.04);
+    }
+
+    .price-tag-large {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--primary-blue);
+        letter-spacing: -1px;
+    }
+
+    /* Icon Badges */
+    .feature-pill {
+        background: #f1f5f9;
+        padding: 12px 20px;
+        border-radius: 16px;
+        font-weight: 600;
+        color: #334155;
+        font-size: 0.9rem;
+        border: 1px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .feature-pill i { color: var(--primary-blue); font-size: 1.1rem; }
+
+    /* Contact Section Upgrade */
+    .host-profile-box {
+        background: #f8fafc;
+        border-radius: 24px;
         padding: 20px;
-        background-size: 50%;
+        margin: 25px 0;
+        border: 1px dashed #cbd5e1;
+    }
+
+    .avatar-circle {
+        width: 45px; height: 45px;
+        background: var(--primary-blue);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+    }
+
+    /* Call to Action Buttons */
+    .btn-luxury {
+        padding: 16px;
+        border-radius: 18px;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .btn-call { background: var(--primary-blue); color: white; border: none; }
+    .btn-call:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(67, 97, 238, 0.25); color: white; }
+
+    .btn-whatsapp { background: #25d366; color: white; border: none; }
+    .btn-whatsapp:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(37, 211, 102, 0.25); color: white; }
+
+    @media (max-width: 768px) {
+        .carousel-item img { height: 350px; }
+        .premium-info-card { padding: 25px; margin-top: 20px; }
     }
 </style>
 
 <div class="container detail-container">
     <div class="row g-4">
         <div class="col-lg-7">
-            {% if listing.images.all %}
-                <div id="listingCarousel" class="carousel slide property-slider" data-bs-ride="carousel">
-                    <div class="carousel-indicators">
-                        {% for img in listing.images.all %}
-                            <button type="button" data-bs-target="#listingCarousel" data-bs-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}"></button>
-                        {% endfor %}
-                    </div>
-
+            <div class="gallery-wrapper">
+                {% if listing.images.all %}
+                <div id="listingCarousel" class="carousel slide main-slider" data-bs-ride="carousel">
                     <div class="carousel-inner">
                         {% for img in listing.images.all %}
-                            <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                                <img src="{{ img.image.url }}" class="d-block w-100" alt="Property Image">
-                            </div>
+                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                            <img src="{{ img.image.url }}" alt="Property View">
+                        </div>
                         {% endfor %}
                     </div>
-
+                    
                     {% if listing.images.count > 1 %}
-                        <button class="carousel-control-prev" type="button" data-bs-target="#listingCarousel" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Previous</span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#listingCarousel" data-bs-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Next</span>
-                        </button>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#listingCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon p-3 bg-dark rounded-circle" aria-hidden="true"></span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#listingCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon p-3 bg-dark rounded-circle" aria-hidden="true"></span>
+                    </button>
                     {% endif %}
                 </div>
-            {% else %}
-                <div class="property-slider d-flex align-items-center justify-content-center" style="height: 500px;">
-                    <div class="text-center">
-                        <i class="fas fa-image fa-4x text-muted mb-3"></i>
-                        <p class="text-muted">No images available for this property.</p>
+                {% else %}
+                <div class="main-slider d-flex align-items-center justify-content-center bg-light" style="height: 500px;">
+                    <div class="text-center opacity-50">
+                        <i class="fas fa-image fa-4x mb-3"></i>
+                        <p>No Images Uploaded</p>
                     </div>
                 </div>
-            {% endif %}
+                {% endif %}
+            </div>
+
+            <div class="mt-5 px-3">
+                <h3 class="fw-bold text-dark mb-4">About this property</h3>
+                <p class="text-secondary lh-lg" style="font-size: 1.1rem;">
+                    {{ listing.description|linebreaks }}
+                </p>
+                
+                <div class="mt-5 p-4 border-start border-4 border-primary bg-white rounded-end shadow-sm">
+                    <h6 class="fw-bold mb-2">Safety Note:</h6>
+                    <p class="small text-muted mb-0">Always visit the property in person and verify all documents before making any payments to the owner.</p>
+                </div>
+            </div>
         </div>
 
         <div class="col-lg-5">
-            <div class="info-card">
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <span class="badge bg-success p-2 px-3 rounded-pill">Available</span>
-                    <button class="btn btn-outline-danger border-0 rounded-circle"><i class="far fa-heart fa-lg"></i></button>
-                </div>
+            <div class="sticky-info">
+                <div class="premium-info-card">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill fw-bold">Active Listing</span>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-light rounded-circle shadow-sm"><i class="far fa-heart"></i></button>
+                            <button class="btn btn-light rounded-circle shadow-sm"><i class="fas fa-share-alt"></i></button>
+                        </div>
+                    </div>
 
-                <h1 class="fw-bold mb-1">{{ listing.title }}</h1>
-                <p class="text-muted mb-4"><i class="fas fa-map-marker-alt me-2 text-primary"></i>{{ listing.location }}</p>
-                
-                <div class="d-flex align-items-center mb-4">
-                    <h2 class="text-primary fw-bold mb-0">৳ {{ listing.price }}</h2>
-                    <span class="text-muted ms-2">/ month</span>
-                </div>
+                    <h1 class="fw-bold text-dark mb-2" style="font-size: 2rem;">{{ listing.title }}</h1>
+                    <p class="text-muted mb-4 d-flex align-items-center">
+                        <i class="fas fa-map-marker-alt me-2 text-danger"></i> {{ listing.location }}
+                    </p>
 
-                <div class="d-flex gap-3 mb-4 flex-wrap">
-                    <div class="feature-badge"><i class="fas fa-bed me-2"></i>{{ listing.bedrooms }} Bed</div>
-                    <div class="feature-badge"><i class="fas fa-bath me-2"></i>Attached Bath</div>
-                </div>
+                    <div class="d-flex align-items-baseline mb-4">
+                        <span class="price-tag-large">৳{{ listing.price }}</span>
+                        <span class="text-muted ms-2 fw-medium">/ per month</span>
+                    </div>
 
-                <h5 class="fw-bold mb-2">Description</h5>
-                <p class="text-secondary mb-4" style="text-align: justify;">{{ listing.description }}</p>
+                    <div class="row g-3 mb-4">
+                        <div class="col-6">
+                            <div class="feature-pill">
+                                <i class="fas fa-bed"></i> <span>{{ listing.bedrooms }} Bedrooms</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="feature-pill">
+                                <i class="fas fa-sink"></i> <span>Attached Bath</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="feature-pill">
+                                <i class="fas fa-wifi"></i> <span>High-speed WiFi</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="feature-pill">
+                                <i class="fas fa-shield-alt"></i> <span>24/7 Security</span>
+                            </div>
+                        </div>
+                    </div>
 
-                <div class="contact-box mb-4">
-                    <h6 class="fw-bold mb-3">Owner Contact</h6>
-                    <p class="mb-2 text-dark"><i class="fas fa-phone-alt me-2 text-primary"></i> <strong>{{ listing.phone_number }}</strong></p>
-                    <p class="mb-0 text-muted small"><i class="fas fa-user me-2"></i> Listed by: {{ listing.host.username|capfirst }}</p>
-                </div>
+                    <div class="host-profile-box d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="avatar-circle">
+                                {{ listing.host.username|first|upper }}
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-0">{{ listing.host.username|capfirst }}</h6>
+                                <small class="text-muted text-uppercase fw-bold" style="font-size: 10px;">Verified Owner</small>
+                            </div>
+                        </div>
+                        <span class="badge bg-white text-dark border shadow-sm px-2">Joined 2024</span>
+                    </div>
 
-                <div class="d-grid gap-2">
-                    <a href="tel:{{ listing.phone_number }}" class="btn btn-primary py-3 rounded-pill fw-bold shadow-sm">
-                        <i class="fas fa-phone-alt me-2"></i> Call Now
-                    </a>
-                    <a href="https://wa.me/{{ listing.phone_number|slugify }}" target="_blank" class="btn btn-success py-3 rounded-pill fw-bold shadow-sm">
-                        <i class="fab fa-whatsapp me-2"></i> WhatsApp Message
-                    </a>
+                    <div class="d-grid gap-3">
+                        <a href="tel:{{ listing.phone_number }}" class="btn-luxury btn-call">
+                            <i class="fas fa-phone-alt"></i> Direct Call Owner
+                        </a>
+                        <a href="https://wa.me/{{ listing.phone_number }}" target="_blank" class="btn-luxury btn-whatsapp">
+                            <i class="fab fa-whatsapp"></i> Chat on WhatsApp
+                        </a>
+                    </div>
+                    
+                    <p class="text-center mt-4 small text-muted">Reference ID: #ML{{ listing.id }}</p>
                 </div>
             </div>
         </div>

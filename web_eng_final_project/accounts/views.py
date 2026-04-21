@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
-from .forms import SignUpForm  # Eita oboshshoi import thakte hobe
+from django.views.decorators.csrf import csrf_protect
+from .forms import SignUpForm  
 
 def signup_view(request):
     if request.method == 'POST':
@@ -32,6 +33,7 @@ def login_view(request):
             
     # Sothik path ensure korun
     return render(request, 'accounts/login.html')
+
 def logout_view(request):
     logout(request)
     return redirect('login')
