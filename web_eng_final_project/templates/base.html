@@ -37,8 +37,12 @@
 <body class="bg-light">
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow mb-4 sticky-top">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="{% url 'home' %}">🏠 To-Let BD</a>
+     <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
+    <img src="/media/listings/gallery/logo.png" alt="MessLagbe?" 
+         style="height: 50px; width: auto; background: white; padding: 4px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+    
+    <span class="ms-3 fw-bold fs-3 text-white" style="letter-spacing: 1px;">MESS LAGBE?</span>
+</a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -50,34 +54,35 @@
                         <a class="nav-link px-3" href="{% url 'home' %}">Home</a>
                     </li>
                     
-                    {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link px-3" href="{% url 'favorites_list' %}">My Favorites</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link px-3" href="{% url 'my_listings' %}">My Ads</a>
-                        </li>
-                        <li class="nav-item dropdown ms-lg-3">
-                            <a class="nav-link dropdown-toggle btn btn-outline-light btn-sm text-white px-3" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-user-circle me-1"></i> {{ user.username }}
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end shadow border-0">
-                                <li>
-                                    <form action="{% url 'logout' %}" method="post">
-                                        {% csrf_token %}
-                                        <button type="submit" class="dropdown-item text-danger fw-bold">Logout</button>
-                                    </form>
-                                </li>
-                            </ul>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link px-3" href="{% url 'login' %}">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link px-3 border border-light rounded-pill ms-lg-2" href="{% url 'signup' %}">Sign Up</a>
-                        </li>
-                    {% endif %}
+                   {% if user.is_authenticated %}
+    <li class="nav-item">
+        <a class="nav-link px-3" href="{% url 'favorites_list' %}">My Favorites</a>
+    </li>
+    
+    <li class="nav-item">
+        <a class="nav-link px-3 fw-bold text-warning" href="{% url 'dashboard' %}">
+            <i class="fas fa-tachometer-alt me-1"></i> My Dashboard
+        </a>
+    </li>
+
+    <li class="nav-item dropdown ms-lg-3">
+        <a class="nav-link dropdown-toggle btn btn-outline-light btn-sm text-white px-3" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+            <i class="fas fa-user-circle me-1"></i> {{ user.username }}
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+            <li>
+                <a href="{% url 'logout' %}" class="dropdown-item text-danger fw-bold">Logout</a>
+            </li>
+        </ul>
+    </li>
+{% else %}
+    <li class="nav-item">
+        <a class="nav-link px-3" href="{% url 'login' %}">Login</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link px-3 border border-light rounded-pill ms-lg-2" href="{% url 'signup' %}">Sign Up</a>
+    </li>
+{% endif %}
 
                     <li class="nav-item ms-lg-4">
                         <a class="nav-link btn btn-warning text-dark fw-bold px-4 rounded-pill shadow-sm" href="{% url 'create_listing' %}">
@@ -99,9 +104,9 @@
         <div class="container text-center text-md-start">
             <div class="row">
                 <div class="col-md-4 col-lg-4 col-xl-3 mx-auto mt-3">
-                    <h5 class="text-uppercase mb-4 font-weight-bold text-primary">Daffodil To-Let</h5>
+                    <h5 class="text-uppercase mb-4 font-weight-bold text-primary">MESS LAGBE.</h5>
                     <p class="small text-secondary">
-                        Khagan, Ashulia-r bhetore shokol dhoronr basha-vara khujar shera platform. Amader uddessho apnar jonno basha khojake shohoj kora.
+                        It is designed to help users find rental properties across versity area. The platform allows property owners to post their listings and potential tenants to browse and contact them directly.
                     </p>
                 </div>
 
@@ -115,7 +120,7 @@
                 <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mt-3">
                     <h5 class="text-uppercase mb-4 font-weight-bold text-primary">Contact</h5>
                     <p class="small"><i class="fas fa-home me-2"></i> Khagan, Ashulia, Dhaka</p>
-                    <p class="small"><i class="fas fa-envelope me-2"></i> support@tolet.com</p>
+                    <p class="small"><i class="fas fa-envelope me-2"></i> abirpial.s@gmail.com</p>
                     <p class="small"><i class="fas fa-phone me-2"></i> +880 1791695952</p>
                 </div>
             </div>

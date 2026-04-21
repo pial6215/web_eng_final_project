@@ -11,4 +11,7 @@ urlpatterns = [
     path('listing/<int:pk>/delete/', views.delete_listing, name='delete_listing'),
     path('listing/<int:pk>/edit/', views.edit_listing, name='edit_listing'),
     path('favorite/<int:listing_id>/', views.toggle_favorite, name='toggle_favorite'),
+    path('dashboard/', views.owner_dashboard, name='dashboard'),
+    path('delete/<int:listing_id>/', views.delete_listing, name='delete_listing'),
+    path('edit/<int:listing_id>/', views.edit_listing, name='edit_listing'),
 ]
