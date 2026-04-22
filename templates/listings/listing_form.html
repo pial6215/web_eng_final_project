@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .form-container { max-width: 750px; margin: 3rem auto; }
+    .premium-form-card { border: none; border-radius: 25px; box-shadow: 0 15px 50px rgba(0,0,0,0.1); overflow: hidden; }
+    .form-header { background: #4361ee; padding: 30px; text-align: center; color: white; }
+    .form-control { border-radius: 12px; padding: 12px; background: #f8faff; border: 1px solid #e0e0e0; width: 100%; }
+    /* Hidden file input handling */
+    .upload-box { border: 2px dashed #4361ee; border-radius: 15px; padding: 25px; text-align: center; cursor: pointer; background: #f0f4ff; transition: 0.3s; }
+    .upload-box:hover { background: #e8eeff; }
+    .preview-img { width: 80px; height: 80px; object-fit: cover; border-radius: 10px; margin: 5px; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+</style>
+
+<div class="container form-container">
+    <div class="card premium-form-card">
+        <div class="form-header">
+            <h3>{% if edit_mode %} Edit Listing {% else %} Post Property Ad {% endif %}</h3>
+        </div>
+
+        <div class="card-body p-4">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                {% if form.errors %}
+                    <div class="alert alert-danger">
+                        <strong>Something went wrong:</strong>
+                        <ul class="mb-0">
+                        {% for field, errors in form.errors.items %}
+                            {% for error in errors %}
+                                <li>{{ field|title }}: {{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+
+                {% for field in form %}
+                    {% if field.name != 'images' %}
+                    <div class="mb-3">
+                        <label class="fw-bold mb-1">{{ field.label }}</label>
+                        {{ field }}
+                    </div>
+                    {% endif %}
+                {% endfor %}
+
+                <div class="mb-4">
+                    <label class="fw-bold mb-1">Property Images</label>
+                    <div class="upload-box" onclick="document.getElementById('image-upload').click();">
+                        <i class="fas fa-camera fa-2x mb-2 text-primary"></i>
+                        <p class="mb-0 small fw-bold">Select Images (Multiple selection supported)</p>
+                        
+                        <div class="d-none">
+                            {{ form.images }}
+                        </div>
+                        <div id="file-count" class="text-success small mt-2"></div>
+                    </div>
+                    <div id="image-preview" class="mt-3 d-flex flex-wrap"></div>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold">
+                    {% if edit_mode %} Save Changes {% else %} Publish Advertisement {% endif %}
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Django Form-er widget index theke id ta dhorchi
+    const imageInput = document.getElementById('image-upload');
+    const preview = document.getElementById('image-preview');
+    const countDisplay = document.getElementById('file-count');
+
+    if (imageInput) {
+        imageInput.addEventListener('change', function() {
+            preview.innerHTML = '';
+            if (this.files.length > 0) {
+                countDisplay.innerText = this.files.length + " file(s) selected";
+                Array.from(this.files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.classList.add('preview-img');
+                        preview.appendChild(img);
+                    }
+                    reader.readAsDataURL(file);
+                });
+            } else {
+                countDisplay.innerText = "";
+            }
+        });
+    }
+</script>
+{% endblock %}

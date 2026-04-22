@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up | To-Let BD</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0d6efd 0%, #003d99 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 20px;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .signup-card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 420px;
+        }
+        /* Django form input global styling */
+        .signup-card input, .signup-card select, .signup-card textarea {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-top: 5px;
+            transition: 0.3s;
+        }
+        .signup-card input:focus {
+            border-color: #0d6efd;
+            outline: none;
+            box-shadow: 0 0 5px rgba(13, 110, 253, 0.2);
+        }
+        label {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #444;
+            display: block;
+            margin-top: 10px;
+        }
+        .btn-signup {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            background: #0d6efd;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: 0.3s;
+            margin-top: 20px;
+        }
+        .btn-signup:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+        .footer-text {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.85rem;
+        }
+        .footer-text a {
+            color: #0d6efd;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        /* Scrollbar styling for the form area */
+        .form-scroll-area::-webkit-scrollbar {
+            width: 5px;
+        }
+        .form-scroll-area::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="signup-card">
+        <div class="text-center mb-3">
+            <h1 style="font-size: 35px; margin: 0;">🏠</h1>
+            <h2 class="fw-bold">MESS LAGBE.</h2>
+            <p class="text-muted small">Create your account</p>
+        </div>
+
+        <div class="form-scroll-area" style="max-height: 65vh; overflow-y: auto; padding-right: 8px;">
+            <form method="POST" id="signupForm" novalidate>
+                {% csrf_token %}
+                
+                {% for field in form %}
+                    <div class="mb-2" id="div_{{ field.name }}">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+
+                        <div class="text-danger fw-bold mt-1" id="{{ field.name }}_error" style="font-size: 0.7rem; min-height: 15px;">
+                            {% if field.errors %}⚠️ {{ field.errors.0 }}{% endif %}
+                        </div>
+
+                        {% if field.help_text %}
+                            <small class="text-muted d-block" style="font-size: 0.65rem; line-height: 1.2;">
+                                {% if field.name == 'password1' or field.name == 'password2' %}
+                                    Password must be 8+ chars & unique.
+                                {% else %}
+                                    {{ field.help_text|safe }}
+                                {% endif %}
+                            </small>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+                <button type="submit" class="btn-signup">Sign Up</button>
+            </form>
+        </div>
+
+        <div class="footer-text">
+            Already have an account? <a href="{% url 'login' %}">Login</a>
+        </div>
+    </div>
+
+   <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Field selection (Django default names)
+        const usernameField = document.querySelector('[name="username"]');
+        const emailField = document.querySelector('[name="email"]');
+        const phoneField = document.querySelector('[name="phone_number"]');
+        const roleField = document.querySelector('[name="role"]');
+        const uniIdField = document.querySelector('[name="university_id"]');
+        const pass1 = document.querySelector('[name="password1"]');
+        const pass2 = document.querySelector('[name="password2"]');
+
+        // Status Handler (Style & Message update kore)
+        function setStatus(field, errorDivId, message, isValid) {
+            const errorDiv = document.getElementById(errorDivId);
+            if (!errorDiv) return;
+
+            if (field.value.trim() === "") { // Faka thakle neutral
+                errorDiv.innerText = "";
+                field.style.borderColor = "#ddd";
+            } else if (!isValid) { // Bhul hole Red
+                errorDiv.innerText = "⚠️ " + message;
+                field.style.borderColor = "#dc3545";
+            } else { // Thik hole Green
+                errorDiv.innerText = "";
+                field.style.borderColor = "#198754";
+            }
+        }
+
+usernameField.addEventListener('input', function() {
+    const val = this.value.trim();
+    
+    
+    const isOnlyDigits = /^\d+$/.test(val);
+    const containsAlphabet = /[a-zA-Z]/.test(val);
+    const isLongEnough = val.length >= 4;
+
+    if (val.length > 0) {
+        if (!isLongEnough) {
+            setStatus(this, 'username_error', "Username must be at least 4 characters long", false);
+        } else if (isOnlyDigits) {
+            setStatus(this, 'username_error', "Username must contain at least one letter", false);
+        } else if (!containsAlphabet) {
+        
+            setStatus(this, 'username_error', "At least one letter required", false);
+        } else {
+            setStatus(this, 'username_error', "", true); 
+        }
+    } else {
+        setStatus(this, 'username_error', "", true);
+    }
+});
+        // 2. Email Validation (Live)
+        emailField.addEventListener('input', function() {
+            const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value.trim());
+            setStatus(this, 'email_error', "Valid email address required", isValid);
+        });
+
+        // 3. Phone Validation (Live)
+        phoneField.addEventListener('input', function() {
+            const val = this.value.trim();
+            const isValid = /^\d{11}$/.test(val);
+            setStatus(this, 'phone_number_error', "Valid 11-digit phone number required", isValid);
+        });
+
+        // 4. Password Match & Length (Live)
+        function checkPass() {
+            const isLongEnough = pass1.value.length >= 8;
+            setStatus(pass1, 'password1_error', "Password must be at least 8 characters long", isLongEnough);
+
+            if (pass2.value.length > 0) {
+                const isMatch = pass1.value === pass2.value;
+                setStatus(pass2, 'password2_error', "Passwords do not match", isMatch);
+            }
+        }
+        pass1.addEventListener('input', checkPass);
+        pass2.addEventListener('input', checkPass);
+
+        // 5. Role & University ID Logic
+        function toggleUniId() {
+            const uniDiv = document.getElementById('div_university_id');
+            if (roleField.value !== 'student') {
+                uniDiv.style.opacity = '0.4';
+                uniIdField.disabled = true;
+                uniIdField.value = "";
+                document.getElementById('university_id_error').innerText = "";
+                uniIdField.style.borderColor = "#ddd";
+            } else {
+                uniDiv.style.opacity = '1';
+                uniIdField.disabled = false;
+            }
+        }
+
+        uniIdField.addEventListener('input', function() {
+            if (roleField.value === 'student') {
+                const isValid = this.value.trim().length > 0;
+                setStatus(this, 'university_id_error', "Student hole ID ditei hobe", isValid);
+            }
+        });
+
+        roleField.addEventListener('change', toggleUniId);
+        toggleUniId(); // Initial Load
+    });
+</script>
+</body>
+</html>

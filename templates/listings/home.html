@@ -1,0 +1,318 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+        --glass-bg: rgba(255, 255, 255, 0.95);
+        --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.04), 0 20px 25px -5px rgba(0, 0, 0, 0.03);
+    }
+
+    body {
+        background-color: #f8fafc;
+    }
+
+    /* Search Section Upgrade */
+    .search-wrapper {
+        background: white;
+        padding: 10px;
+        border-radius: 100px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        transition: 0.3s;
+        position: relative;
+        z-index: 50;
+        overflow: visible;
+    }
+
+    .search-wrapper:focus-within {
+        box-shadow: 0 20px 40px rgba(79, 70, 229, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .filter-menu {
+        min-width: 290px;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 16px 35px rgba(15, 23, 42, 0.12);
+        padding: 14px;
+        z-index: 2000;
+    }
+
+    .filter-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        font-weight: 700;
+        color: #64748b;
+        margin-bottom: 6px;
+        display: block;
+    }
+
+    .filter-trigger {
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    /* Premium Card Design */
+    .property-card {
+        border: none;
+        border-radius: 24px;
+        background: white;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow: hidden;
+    }
+
+    .property-card:hover {
+        transform: translateY(-12px);
+        box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.12);
+    }
+
+    /* Image Styling */
+    .img-container {
+        height: 240px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .property-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: 0.6s ease;
+    }
+
+    .property-card:hover .property-img {
+        transform: scale(1.1);
+    }
+
+    /* Badge & Overlays */
+    .price-tag-modern {
+        position: absolute;
+        bottom: 15px;
+        left: 15px;
+        background: white;
+        padding: 8px 16px;
+        border-radius: 12px;
+        font-weight: 800;
+        color: #1e293b;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        z-index: 10;
+    }
+
+    .fav-btn-modern {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(4px);
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.3s;
+        z-index: 10;
+    }
+
+    .fav-btn-modern:hover {
+        background: white;
+        transform: scale(1.1);
+        color: #ef4444;
+    }
+
+    /* Content Area */
+    .card-body-modern {
+        padding: 24px;
+    }
+
+    .location-badge {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 700;
+        color: #6366f1;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    .listing-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 12px;
+        line-height: 1.3;
+    }
+
+    .amenity-pill {
+        background: #f1f5f9;
+        padding: 4px 12px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        color: #475569;
+        font-weight: 500;
+    }
+
+    /* Buttons */
+    .btn-action {
+        background: var(--primary-gradient);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 12px;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+
+    .btn-action:hover {
+        box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+        color: white;
+        transform: translateY(-2px);
+    }
+</style>
+
+<div class="container pt-5 pb-4">
+    <div class="row text-center mb-5">
+        <div class="col-lg-8 mx-auto">
+            <h1 class="display-5 fw-bold mb-3" style="color: #0f172a;">Find a place that fits <span
+                    style="color: #4f46e5;">your life.</span></h1>
+            <p class="text-muted fs-5 mb-4">Discover the best student messes and hostels in your area.</p>
+
+            <div class="search-wrapper d-flex align-items-center">
+                <div class="px-3 text-muted"><i class="fas fa-search"></i></div>
+                <form method="GET" action="{% url 'home' %}" class="d-flex w-100 align-items-center gap-2">
+                    <input type="text" name="search" class="form-control border-0 shadow-none bg-transparent py-2"
+                        placeholder="Search by title or area" value="{{ search_query }}">
+
+                    <div class="dropdown">
+                        <button type="button" class="btn btn-dark rounded-pill px-4 fw-bold filter-trigger"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-sliders-h"></i>
+                            <span>Filter</span>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end filter-menu">
+                            <div class="mb-3">
+                                <label class="filter-label" for="filter-location">Location</label>
+                                <select id="filter-location" name="location" class="form-select">
+                                    <option value="">All Locations</option>
+                                    {% for loc in location_options %}
+                                    <option value="{{ loc.name }}" {% if loc.selected %}selected{% endif %}>
+                                        {{ loc.name|title }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <label class="filter-label" for="filter-min-price">Min Price</label>
+                                    <input id="filter-min-price" type="number" name="min_price" min="0" step="1"
+                                        class="form-control" placeholder="0" value="{{ selected_min_price }}">
+                                </div>
+                                <div class="col-6">
+                                    <label class="filter-label" for="filter-max-price">Max Price</label>
+                                    <input id="filter-max-price" type="number" name="max_price" min="0" step="1"
+                                        class="form-control" placeholder="Any" value="{{ selected_max_price }}">
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-dark w-100 rounded-pill fw-bold">Apply</button>
+                                <a href="{% url 'home' %}"
+                                    class="btn btn-outline-secondary w-100 rounded-pill fw-bold">Clear</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-dark rounded-pill px-4 fw-bold">Search</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-end mb-4">
+        <div>
+            <h3 class="fw-bold mb-1" style="color: #0f172a;">Available Spaces</h3>
+            <div style="width: 50px; height: 4px; background: #4f46e5; border-radius: 2px;"></div>
+        </div>
+        <a href="{% url 'create_listing' %}" class="btn btn-action px-4 shadow-sm">
+            <i class="fas fa-plus me-2"></i>Post New Ad
+        </a>
+    </div>
+
+    <div class="row g-4 mt-2">
+        {% if listings %}
+        {% for listing in listings %}
+        <div class="col-lg-4 col-md-6">
+            <div class="card property-card h-100">
+                <div class="img-container">
+                    {% if listing.display_image_url %}
+                    <img src="{{ listing.display_image_url }}" class="property-img" alt="{{ listing.title }}">
+                    {% else %}
+                    <div class="w-100 h-100 bg-light d-flex align-items-center justify-content-center">
+                        <i class="fas fa-image fa-3x text-muted opacity-25"></i>
+                    </div>
+                    {% endif %}
+
+                    <div class="price-tag-modern">
+                        ৳{{ listing.price }}<span class="text-muted fw-normal" style="font-size: 0.75rem;">/mo</span>
+                    </div>
+
+                    <form method="POST" action="{% url 'toggle_favorite' listing.id %}" class="m-0">
+                        {% csrf_token %}
+                        <button type="submit" class="fav-btn-modern shadow-sm">
+                            <i
+                                class="{% if listing.id in user_favorite_ids %}fas fa-heart text-danger{% else %}far fa-heart{% endif %} fs-5"></i>
+                        </button>
+                    </form>
+                </div>
+
+                <div class="card-body-modern">
+                    <span class="location-badge">
+                        <i class="fas fa-location-arrow me-1"></i>
+                        {{ listing.location }}
+                    </span>
+                    <h5 class="listing-title">{{ listing.title }}</h5>
+
+                    <div class="d-flex gap-2 mb-4">
+                        <span class="amenity-pill"><i class="fas fa-bed me-1 text-primary"></i> {{ listing.bedrooms }}
+                            Bed</span>
+                        <span class="amenity-pill"><i class="fas fa-user-graduate me-1 text-success"></i>
+                            Verified</span>
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-between pt-3 border-top">
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold text-white shadow-sm"
+                                style="width: 32px; height: 32px; background: #1e293b; font-size: 11px;">
+                                {{ listing.host.username|make_list|first|upper }}
+                            </div>
+                            <span class="ms-2 small fw-bold text-dark">{{ listing.host.username }}</span>
+                        </div>
+                        <a href="{% url 'listing_detail' listing.id %}"
+                            class="btn btn-outline-dark btn-sm rounded-pill px-3 fw-bold">Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="col-12 text-center py-5">
+            <div class="bg-white p-5 rounded-5 shadow-sm border border-dashed">
+                <img src="https://cdn-icons-png.flaticon.com/512/6134/6134065.png" width="80" class="mb-3 opacity-50"
+                    alt="not found">
+                <h4 class="fw-bold">No Properties Found</h4>
+                <p class="text-muted">Try a different location or search term.</p>
+                <a href="{% url 'home' %}" class="btn btn-primary rounded-pill px-4 mt-2">Clear Search</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,283 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    :root {
+        --primary-blue: #4361ee;
+        --soft-bg: #f8fafc;
+    }
+
+    body {
+        background-color: var(--soft-bg);
+    }
+
+    .detail-container {
+        max-width: 1200px;
+        margin-top: 2rem;
+        margin-bottom: 5rem;
+    }
+
+    /* Glassmorphism Gallery Container */
+    .gallery-wrapper {
+        background: white;
+        padding: 12px;
+        border-radius: 32px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
+    }
+
+    .main-slider {
+        border-radius: 24px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .carousel-item img {
+        height: 550px;
+        object-fit: cover;
+        width: 100%;
+        transition: transform 0.5s ease;
+    }
+
+    /* Info Sidebar Styling */
+    .sticky-info {
+        position: sticky;
+        top: 20px;
+    }
+
+    .premium-info-card {
+        border-radius: 32px;
+        border: none;
+        background: white;
+        padding: 35px;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.04);
+    }
+
+    .price-tag-large {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--primary-blue);
+        letter-spacing: -1px;
+    }
+
+    /* Icon Badges */
+    .feature-pill {
+        background: #f1f5f9;
+        padding: 12px 20px;
+        border-radius: 16px;
+        font-weight: 600;
+        color: #334155;
+        font-size: 0.9rem;
+        border: 1px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .feature-pill i {
+        color: var(--primary-blue);
+        font-size: 1.1rem;
+    }
+
+    /* Contact Section Upgrade */
+    .host-profile-box {
+        background: #f8fafc;
+        border-radius: 24px;
+        padding: 20px;
+        margin: 25px 0;
+        border: 1px dashed #cbd5e1;
+    }
+
+    .avatar-circle {
+        width: 45px;
+        height: 45px;
+        background: var(--primary-blue);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+    }
+
+    /* Call to Action Buttons */
+    .btn-luxury {
+        padding: 16px;
+        border-radius: 18px;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .btn-call {
+        background: var(--primary-blue);
+        color: white;
+        border: none;
+    }
+
+    .btn-call:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(67, 97, 238, 0.25);
+        color: white;
+    }
+
+    .btn-whatsapp {
+        background: #25d366;
+        color: white;
+        border: none;
+    }
+
+    .btn-whatsapp:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(37, 211, 102, 0.25);
+        color: white;
+    }
+
+    @media (max-width: 768px) {
+        .carousel-item img {
+            height: 350px;
+        }
+
+        .premium-info-card {
+            padding: 25px;
+            margin-top: 20px;
+        }
+    }
+</style>
+
+<div class="container detail-container">
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="gallery-wrapper">
+                {% if listing.images.all %}
+                <div id="listingCarousel" class="carousel slide main-slider" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        {% for img in listing.images.all %}
+                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                            <img src="{{ img.image.url }}" alt="Property View">
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    {% if listing.images.count > 1 %}
+                    <button class="carousel-control-prev" type="button" data-bs-target="#listingCarousel"
+                        data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon p-3 bg-dark rounded-circle" aria-hidden="true"></span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#listingCarousel"
+                        data-bs-slide="next">
+                        <span class="carousel-control-next-icon p-3 bg-dark rounded-circle" aria-hidden="true"></span>
+                    </button>
+                    {% endif %}
+                </div>
+                {% elif listing.image %}
+                <div class="main-slider">
+                    <img src="{{ listing.image.url }}" alt="Property View"
+                        style="height: 550px; object-fit: cover; width: 100%;">
+                </div>
+                {% else %}
+                <div class="main-slider d-flex align-items-center justify-content-center bg-light"
+                    style="height: 500px;">
+                    <div class="text-center opacity-50">
+                        <i class="fas fa-image fa-4x mb-3"></i>
+                        <p>No Images Uploaded</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="mt-5 px-3">
+                <h3 class="fw-bold text-dark mb-4">About this property</h3>
+                <p class="text-secondary lh-lg" style="font-size: 1.1rem;">
+                    {{ listing.description|linebreaks }}
+                </p>
+
+                <div class="mt-5 p-4 border-start border-4 border-primary bg-white rounded-end shadow-sm">
+                    <h6 class="fw-bold mb-2">Safety Note:</h6>
+                    <p class="small text-muted mb-0">Always visit the property in person and verify all documents before
+                        making any payments to the owner.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="sticky-info">
+                <div class="premium-info-card">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill fw-bold">Active
+                            Listing</span>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-light rounded-circle shadow-sm"><i class="far fa-heart"></i></button>
+                            <button class="btn btn-light rounded-circle shadow-sm"><i
+                                    class="fas fa-share-alt"></i></button>
+                        </div>
+                    </div>
+
+                    <h1 class="fw-bold text-dark mb-2" style="font-size: 2rem;">{{ listing.title }}</h1>
+                    <p class="text-muted mb-4 d-flex align-items-center">
+                        <i class="fas fa-map-marker-alt me-2 text-danger"></i> {{ listing.location }}
+                    </p>
+
+                    <div class="d-flex align-items-baseline mb-4">
+                        <span class="price-tag-large">৳{{ listing.price }}</span>
+                        <span class="text-muted ms-2 fw-medium">/ per month</span>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-6">
+                            <div class="feature-pill">
+                                <i class="fas fa-bed"></i> <span>{{ listing.bedrooms }} Bedrooms</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="feature-pill">
+                                <i class="fas fa-sink"></i> <span>Attached Bath</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="feature-pill">
+                                <i class="fas fa-wifi"></i> <span>High-speed WiFi</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="feature-pill">
+                                <i class="fas fa-shield-alt"></i> <span>24/7 Security</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="host-profile-box d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="avatar-circle">
+                                {{ listing.host.username|first|upper }}
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-0">{{ listing.host.username|capfirst }}</h6>
+                                <small class="text-muted text-uppercase fw-bold" style="font-size: 10px;">Verified
+                                    Owner</small>
+                            </div>
+                        </div>
+                        <span class="badge bg-white text-dark border shadow-sm px-2">Joined 2024</span>
+                    </div>
+
+                    <div class="d-grid gap-3">
+                        <a href="tel:{{ listing.phone_number }}" class="btn-luxury btn-call">
+                            <i class="fas fa-phone-alt"></i> Direct Call Owner
+                        </a>
+                        <a href="https://wa.me/{{ listing.phone_number }}" target="_blank"
+                            class="btn-luxury btn-whatsapp">
+                            <i class="fab fa-whatsapp"></i> Chat on WhatsApp
+                        </a>
+                    </div>
+
+                    <p class="text-center mt-4 small text-muted">Reference ID: #ML{{ listing.id }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
