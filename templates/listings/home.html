@@ -174,6 +174,40 @@
         color: white;
         transform: translateY(-2px);
     }
+
+    /* Lottie Animation Container */
+    #lottie-hero {
+        max-width: 400px;
+        height: 400px;
+        margin: 0 auto;
+        animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(0px);
+        }
+        50% {
+            transform: translateY(-20px);
+        }
+    }
+
+    .hero-lottie-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 40px;
+    }
+
+    @media (max-width: 768px) {
+        #lottie-hero {
+            max-width: 300px;
+            height: 300px;
+        }
+        .hero-lottie-wrapper {
+            margin-bottom: 30px;
+        }
+    }
 </style>
 
 <div class="container pt-5 pb-4">
@@ -182,6 +216,46 @@
             <h1 class="display-5 fw-bold mb-3" style="color: #0f172a;">Find a place that fits <span
                     style="color: #4f46e5;">your life.</span></h1>
             <p class="text-muted fs-5 mb-4">Discover the best student messes and hostels in your area.</p>
+
+            <!-- Lottie Animation Section -->
+            <div class="hero-lottie-wrapper">
+                <div id="lottie-hero">
+                    <!-- Inline animated SVG fallback so something always shows in the hero. -->
+                    <svg id="svg-hero" viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg" role="img"
+                        aria-label="Hero animation" style="width:100%;height:100%;max-width:400px;max-height:320px;">
+                        <style>
+                            .house-body { fill: #2563eb; transform-origin: 200px 180px; animation: pulse 3s ease-in-out infinite; }
+                            .roof { fill: #111827; }
+                            .pin-head { fill: #ef4444; transform-origin: 260px 140px; animation: bounce 2s ease-in-out infinite; }
+                            .pin-tail { fill: #ffffff; opacity: 0.95; }
+                            @keyframes pulse {
+                                0%,100% { transform: scale(1); }
+                                50% { transform: scale(1.06); }
+                            }
+                            @keyframes bounce {
+                                0% { transform: translateY(0); }
+                                50% { transform: translateY(-12px); }
+                                100% { transform: translateY(0); }
+                            }
+                        </style>
+
+                        <!-- Soft glowing circle background -->
+                        <circle cx="200" cy="140" r="110" fill="#eef2ff" opacity="0.9" />
+
+                        <!-- House body -->
+                        <rect class="house-body" x="140" y="140" rx="10" width="120" height="90" />
+
+                        <!-- Roof -->
+                        <polygon class="roof" points="200,80 120,150 280,150" />
+
+                        <!-- Pin (location marker) -->
+                        <g class="pin" transform="translate(0,0)">
+                            <circle class="pin-head" cx="260" cy="130" r="18" />
+                            <path class="pin-tail" d="M260 148 L252 170 L268 170 Z" />
+                        </g>
+                    </svg>
+                </div>
+            </div>
 
             <div class="search-wrapper d-flex align-items-center">
                 <div class="px-3 text-muted"><i class="fas fa-search"></i></div>
@@ -314,5 +388,85 @@
         {% endif %}
     </div>
 </div>
+
+<script>
+    // Robust Lottie loader: if library missing, load CDN, then fetch JSON and init; shows fallback on error.
+    document.addEventListener('DOMContentLoaded', function() {
+        const lottieContainer = document.getElementById('lottie-hero');
+        if (!lottieContainer) {
+            console.error('Lottie container not found: #lottie-hero');
+            return;
+        }
+
+        function showFallback() {
+            lottieContainer.innerHTML = `
+                <svg width="160" height="160" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="24" height="24" rx="4" fill="#eef2ff" />
+                    <path d="M3 13h18v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-6z" fill="#c7d2fe"/>
+                    <path d="M12 3l6 6h-3v4h-6V9H6l6-6z" fill="#4f46e5"/>
+                </svg>
+            `;
+        }
+
+        function fetchAndInit() {
+            console.info('Fetching Lottie JSON...');
+                fetch('/media/animations/hero-lottie.json')
+                .then(function(res) {
+                    if (!res.ok) throw new Error('HTTP ' + res.status);
+                    return res.json();
+                })
+                .then(function(animationData) {
+                    try {
+                        lottie.loadAnimation({
+                            container: lottieContainer,
+                            renderer: 'svg',
+                            loop: true,
+                            autoplay: true,
+                            animationData: animationData
+                        });
+                        console.info('Lottie animation initialized');
+                    } catch (err) {
+                        console.error('Failed to initialize Lottie:', err);
+                        showFallback();
+                    }
+                })
+                .catch(function(err) {
+                    console.error('Failed to fetch Lottie JSON:', err);
+                    showFallback();
+                });
+        }
+
+        // If Lottie already available, init; otherwise dynamically load library then init
+        if (typeof lottie !== 'undefined') {
+            fetchAndInit();
+            return;
+        }
+
+        // Try loading a local lottie script from static first, then fall back to CDN
+        const script = document.createElement('script');
+        script.src = "{% static 'js/lottie.min.js' %}";
+        script.async = true;
+        script.onload = function() {
+            console.info('Lottie library loaded (local)');
+            fetchAndInit();
+        };
+        script.onerror = function() {
+            console.warn('Local lottie failed; trying CDN');
+            const cdn = document.createElement('script');
+            cdn.src = 'https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.10.2/lottie.min.js';
+            cdn.async = true;
+            cdn.onload = function() {
+                console.info('Lottie library loaded from CDN');
+                fetchAndInit();
+            };
+            cdn.onerror = function() {
+                console.error('Failed to load Lottie library from CDN');
+                showFallback();
+            };
+            document.head.appendChild(cdn);
+        };
+        document.head.appendChild(script);
+    });
+</script>
 
 {% endblock %}

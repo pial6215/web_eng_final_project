@@ -8,7 +8,7 @@ from decimal import Decimal, InvalidOperation
 from .models import Listing, Favorite, ListingImage
 from .forms import ListingForm
 
-# 1. Home View (Heart logic fix kora hoyeche)
+# 1. HOME VIEW
 def home_view(request):
     query = request.GET.get('search', '').strip()
     selected_location = request.GET.get('location', '').strip()
@@ -118,9 +118,9 @@ def create_listing(request):
 
     return render(request, 'listings/listing_form.html', {'form': form})
 
-# 3. Listing Detail View
-def listing_detail(request, pk):
-    listing = get_object_or_404(Listing, pk=pk)
+# 3. LISTING DETAIL
+def listing_detail(request, listing_id):
+    listing = get_object_or_404(Listing, id=listing_id)
     is_favorite = False
     if request.user.is_authenticated:
         is_favorite = Favorite.objects.filter(user=request.user, listing=listing).exists()
@@ -159,69 +159,43 @@ def my_listings(request):
     user_ads = Listing.objects.filter(host=request.user).order_by('-created_at')
     return render(request, 'listings/my_listings.html', {'user_ads': user_ads})
 
-# 7. Delete Listing
+# 7. DELETE LISTING
 @login_required(login_url='/accounts/login/')
-def delete_listing(request, pk):
-    listing = get_object_or_404(Listing, pk=pk, host=request.user)
+def delete_listing(request, listing_id):
+    listing = get_object_or_404(Listing, id=listing_id, host=request.user)
     if request.method == 'POST':
         listing.delete()
         return redirect('my_listings')
     return render(request, 'listings/delete_confirm.html', {'listing': listing})
 
-# 8. Edit Listing
+# 8. EDIT LISTING
 @login_required(login_url='/accounts/login/')
-def edit_listing(request, pk):
-    listing = get_object_or_404(Listing, pk=pk, host=request.user)
+def edit_listing(request, listing_id):
+    listing = get_object_or_404(Listing, id=listing_id)
+
+    # Security check
+    if getattr(request.user, 'role', '') != 'owner' or listing.host != request.user:
+        return HttpResponseForbidden("You cannot edit this listing.")
+
     if request.method == 'POST':
         form = ListingForm(request.POST, request.FILES, instance=listing)
         if form.is_valid():
             form.save()
-            # Jodi naya chobi add korte chan editing-e:
+            # Add new images if provided
             images = request.FILES.getlist('images')
             for img in images:
                 ListingImage.objects.create(listing=listing, image=img)
             return redirect('my_listings')
     else:
         form = ListingForm(instance=listing)
-    return render(request, 'listings/listing_form.html', {'form': form, 'edit_mode': True})
-from django.shortcuts import redirect
 
+    return render(request, 'listings/listing_form.html', {'form': form, 'edit_mode': True})
+
+# 9. OWNER DASHBOARD
 @login_required(login_url='/accounts/login/')
 def owner_dashboard(request):
     if getattr(request.user, 'role', '') != 'owner':
-        return redirect('home') # Student-ra dashboard-e ashle home-e chole jabe
+        return redirect('home')
 
-    user_listings = Listing.objects.filter(host=request.user).order_by('-id')
+    user_listings = Listing.objects.filter(host=request.user).order_by('-created_at')
     return render(request, 'listings/dashboard.html', {'listings': user_listings})
-from django.shortcuts import get_object_or_404, redirect
-
-# --- DELETE LISTING ---
-@login_required
-def delete_listing(request, listing_id):
-    listing = get_object_or_404(Listing, id=listing_id)
-
-    # Security: Check korsi user owner kina ebong shei ei ad-er owner kina
-    if getattr(request.user, 'role', '') == 'owner' and listing.host == request.user:
-        listing.delete()
-        return redirect('dashboard')
-    else:
-        return HttpResponseForbidden("Apnar ei ad delete korar khomota nai!")
-
-# --- EDIT LISTING ---
-@login_required
-def edit_listing(request, listing_id):
-    listing = get_object_or_404(Listing, id=listing_id)
-
-    # Security check
-    if getattr(request.user, 'role', '') != 'owner' or listing.host != request.user:
-        return HttpResponseForbidden("Apni ei ad edit korte parben na.")
-
-    if request.method == 'POST':
-        form = ListingForm(request.POST, request.FILES, instance=listing)
-        if form.is_valid():
-            form.save()
-            return redirect('dashboard')
-    else:
-        form = ListingForm(instance=listing)
-
-    return render(request, 'listings/listing_form.html', {'form': form, 'edit_mode': True})
