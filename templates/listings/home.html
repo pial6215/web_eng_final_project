@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8 mx-auto">
+        <form method="GET" action="{% url 'home' %}" class="d-flex">
+            <input class="form-control me-2 rounded-pill px-4" type="search" name="search" placeholder="khagan, dawttopara, changao likhe search korun" aria-label="Search">
+            <button class="btn btn-primary rounded-pill px-4" type="submit">Search</button>
+        </form>
+    </div>
+</div>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-dark">🏠 Latest To-Let Advertisements</h2>
+        <a href="{% url 'create_listing' %}" class="btn btn-primary btn-sm rounded-pill px-3">+ Post New Ad</a>
+    </div>
+    <hr>
+
+    <div class="row">
+        {% if listings %}
+            {% for listing in listings %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden" style="transition: transform 0.3s; cursor: pointer;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                        
+                        <div class="card-body">
+                            <span class="badge bg-success mb-2 p-2">৳{{ listing.price }} / Month</span>
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h4 class="card-title fw-bold text-primary mb-0">{{ listing.title }}</h4>
+                                
+                                <a href="{% url 'toggle_favorite' listing.id %}" class="text-decoration-none">
+                                    {% if user.is_authenticated %}
+                                        {% if listing.favorite_set.all %}
+                                            <i class="fas fa-heart text-danger fs-4"></i>
+                                        {% else %}
+                                            <i class="far fa-heart text-muted fs-4"></i>
+                                        {% endif %}
+                                    {% else %}
+                                        <i class="far fa-heart text-muted fs-4"></i>
+                                    {% endif %}
+                                </a>
+                            </div>
+                            <p class="text-muted mb-2">
+                                <i class="fas fa-map-marker-alt text-danger"></i> <b>Location:</b> {{ listing.location }}
+                            </p>
+                            
+                            <div class="d-flex justify-content-between mb-3">
+                                <span><i class="fas fa-bed text-info"></i> {{ listing.bedrooms }} Bedrooms</span>
+                            </div>
+                            
+                            <p class="card-text text-secondary small">
+                                {{ listing.description|truncatewords:15 }}
+                            </p>
+                        </div>
+
+                        <div class="card-footer bg-white border-top-0 pb-3">
+                            <hr class="mt-0">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <small class="text-muted">
+                                    <i class="fas fa-user-circle"></i> {{ listing.host.username }}
+                                </small>
+                                <small class="text-muted">
+                                    <i class="far fa-calendar-alt"></i> {{ listing.created_at|date:"M d" }}
+                                </small>
+                            </div>
+                            <a href="{% url 'listing_detail' listing.id %}" class="btn btn-outline-primary btn-sm w-100 mt-3 rounded-pill text-decoration-none">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12 text-center py-5">
+                <div class="alert alert-info rounded-4">
+                    <h4 class="mb-0">😔 Ekhono kono To-let post kora hoyni!</h4>
+                    <p class="mt-2">Prothom post-ti apni-i korun.</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
